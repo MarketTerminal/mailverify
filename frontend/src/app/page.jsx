@@ -24,11 +24,14 @@ export default function Home() {
     }
   }, []);
 
+  useEffect(() => { refresh(); }, [refresh]);
+
   useEffect(() => {
-    refresh();
+    const hasActiveJob = jobs.some((j) => j.status === 'processing' || j.status === 'pending');
+    if (!hasActiveJob) return;
     const interval = setInterval(refresh, 4000);
     return () => clearInterval(interval);
-  }, [refresh]);
+  }, [jobs, refresh]);
 
   const handleVerified   = useCallback(() => refresh(), [refresh]);
   const handleJobCreated = useCallback((job) => {
@@ -41,13 +44,10 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       <header className="border-b border-zinc-100 bg-white/80 backdrop-blur sticky top-0 z-10">
-        <div className="max-w-[1400px] mx-auto px-8 py-4 flex items-center justify-between">
+        <div className="max-w-[1400px] mx-auto px-8 py-4">
           <span className="text-[15px] font-semibold tracking-tight text-zinc-900">
             Email Verifier
           </span>
-          <div className="text-[11px] text-zinc-400 font-mono">
-            {health ? new Date(health.time).toLocaleTimeString() : '—'}
-          </div>
         </div>
       </header>
 
