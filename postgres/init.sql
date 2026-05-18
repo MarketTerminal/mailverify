@@ -43,9 +43,10 @@ CREATE TABLE IF NOT EXISTS verifications (
   ip_used      INET,
   raw_result   JSONB,
   duration_ms  INT,
-  status       TEXT NOT NULL DEFAULT 'pending',
-  verified_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  claimed_at   TIMESTAMPTZ
+  status        TEXT NOT NULL DEFAULT 'pending',
+  verified_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  claimed_at    TIMESTAMPTZ,
+  next_retry_at TIMESTAMPTZ
 );
 
 CREATE INDEX IF NOT EXISTS idx_verifications_bulk_job   ON verifications(bulk_job_id);

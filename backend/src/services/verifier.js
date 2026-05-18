@@ -24,7 +24,14 @@ export async function verifySingle(emailRaw, opts = {}) {
   if (!ip) {
     const durationMs = Date.now() - start;
     if (verificationId) {
-      await pool.query(`UPDATE verifications SET status='pending' WHERE id=$1`, [verificationId]);
+      await pool.query(
+        `UPDATE verifications
+            SET status='pending',
+                claimed_at=NULL,
+                next_retry_at=NOW() + INTERVAL '10 minutes'
+          WHERE id=$1`,
+        [verificationId]
+      );
     }
     return { id: verificationId, email, verdict: 'unknown', reason: 'capacity_exhausted',
              ipUsed: null, durationMs, stage: 'ip_pick', error: 'no_ip_available' };

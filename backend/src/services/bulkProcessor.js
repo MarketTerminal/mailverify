@@ -12,6 +12,7 @@ async function claimBatch(limit) {
     `WITH next AS (
        SELECT id FROM verifications
        WHERE status = 'pending'
+         AND (next_retry_at IS NULL OR next_retry_at <= NOW())
        ORDER BY id
        LIMIT $1
        FOR UPDATE SKIP LOCKED
