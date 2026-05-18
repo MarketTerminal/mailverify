@@ -7,7 +7,7 @@ export const pool = new Pool({
   user:     process.env.PGUSER     || 'verifier',
   password: process.env.PGPASSWORD,
   database: process.env.PGDATABASE || 'verifier',
-  max: 20,
+  max: 40,
   idleTimeoutMillis: 30_000,
   connectionTimeoutMillis: 5_000,
 });
