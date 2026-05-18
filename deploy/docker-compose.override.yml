@@ -26,6 +26,7 @@ services:
       ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
       SESSION_SECRET: "${SESSION_SECRET}"
     restart: unless-stopped
+    stop_grace_period: 35s
     depends_on:
       - postgres
       - reacher

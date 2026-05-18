@@ -6,6 +6,8 @@ const CONCURRENCY = parseInt(process.env.WORKER_CONCURRENCY || '4', 10);
 
 let running = false;
 let stopRequested = false;
+let stoppedResolver = null;
+let stoppedPromise = Promise.resolve();
 
 async function claimBatch(limit) {
   const { rows } = await pool.query(
@@ -96,6 +98,7 @@ export function startWorker() {
   if (running) return;
   running = true;
   stopRequested = false;
+  stoppedPromise = new Promise((resolve) => { stoppedResolver = resolve; });
   console.log(`[worker] started — concurrency=${CONCURRENCY}, poll=${POLL_MS}ms`);
 
   (async function loop() {
@@ -110,11 +113,13 @@ export function startWorker() {
     }
     running = false;
     console.log('[worker] stopped');
+    if (stoppedResolver) stoppedResolver();
   })();
 }
 
 export function stopWorker() {
   stopRequested = true;
+  return stoppedPromise;
 }
 
 function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }

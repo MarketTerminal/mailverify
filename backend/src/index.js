@@ -59,11 +59,28 @@ let server;
 
 async function shutdown(signal) {
   console.log(`[shutdown] ${signal} received`);
-  stopWorker();
+
+  const SHUTDOWN_TIMEOUT_MS = 30_000;
+  try {
+    await Promise.race([
+      stopWorker(),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('worker_drain_timeout')), SHUTDOWN_TIMEOUT_MS),
+      ),
+    ]);
+    console.log('[shutdown] worker drained');
+  } catch (err) {
+    console.error('[shutdown] worker drain failed:', err.message);
+  }
+
   if (server) server.close();
+
   try {
     await pool.end();
-  } catch (_) {}
+  } catch (err) {
+    console.error('[shutdown] pool.end() failed:', err.message);
+  }
+
   process.exit(0);
 }
 process.on("SIGTERM", () => shutdown("SIGTERM"));
