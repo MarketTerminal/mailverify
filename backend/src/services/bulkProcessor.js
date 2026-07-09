@@ -103,7 +103,7 @@ async function markJobStarted(jobId) {
 async function refreshJobCounts(jobId) {
   const { rows } = await pool.query(
     `SELECT
-       COUNT(*) FILTER (WHERE status = 'done')                                AS processed,
+       COUNT(*) FILTER (WHERE status IN ('done','failed'))                    AS processed,
        COUNT(*) FILTER (WHERE verdict = 'valid')                              AS valid,
        COUNT(*) FILTER (WHERE verdict = 'invalid')                            AS invalid,
        COUNT(*) FILTER (WHERE verdict = 'risky')                              AS risky,
