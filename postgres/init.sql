@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS verifications (
 );
 
 CREATE INDEX IF NOT EXISTS idx_verifications_bulk_job   ON verifications(bulk_job_id);
-CREATE INDEX IF NOT EXISTS idx_verifications_status     ON verifications(status) WHERE status = 'pending';
+CREATE INDEX IF NOT EXISTS idx_verifications_status_pending ON verifications(status, id) WHERE status = 'pending';
 CREATE INDEX IF NOT EXISTS idx_verifications_email      ON verifications(email);
 CREATE INDEX IF NOT EXISTS idx_verifications_processing ON verifications(claimed_at) WHERE status = 'processing';
 
